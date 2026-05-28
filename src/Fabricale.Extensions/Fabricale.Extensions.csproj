@@ -1,0 +1,53 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>netstandard2.0;net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
+		<LangVersion>10.0</LangVersion>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>disable</ImplicitUsings>
+
+		<!-- Library Details -->
+		<RootNamespace>Fabricale.Extensions</RootNamespace>
+		<AssemblyName>Fabricale.Extensions</AssemblyName>
+		<AssemblyTitle>Fabricale.Extensions</AssemblyTitle>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	</PropertyGroup>
+
+	<!-- Nuget Package Info -->
+	<PropertyGroup Label="Nuget Package Info">
+
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PackageId>Fabricale.Extensions</PackageId>
+
+		<!-- Versioning happens in the CI/CD Pipeline - Keep it as 0.1.0 -->
+		<Version>0.1.0</Version>
+
+		<Title>Fabricale.Extensions</Title>
+		<Authors>Olavo Henrique Dias</Authors>
+		<Company>Olavo Henrique Dias</Company>
+		<Product>Fabricale.Extensions</Product>
+		<Description>Fabricale .NET Extensions</Description>
+		<Summary>Fabricale Extensions - A list of additional features to standard .NET components optimized for performance</Summary>
+		<Copyright>Copyright © Olavo Henrique Dias 2026</Copyright>
+		<NeutralLanguage>en-US</NeutralLanguage>
+		<PackageTags>.NET Fabricale Extensions</PackageTags>
+
+		<PackageReadmeFile>README.MD</PackageReadmeFile>
+		<PackageIcon>nugetPackageIcon.png</PackageIcon>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+		<RepositoryUrl>https://github.com/Fabricale/Fabricale.Extensions</RepositoryUrl>
+		<PackageProjectUrl>https://github.com/Fabricale/Fabricale.Extensions</PackageProjectUrl>
+		<PackageReleaseNotes>The change log is available at https://github.com/Fabricale/Fabricale.Extensions/blob/master/CHANGELOG.md</PackageReleaseNotes>
+	</PropertyGroup>
+
+	<!-- Add Special Files to the Output Folder, for the Nuget Package Creation -->
+	<ItemGroup>
+		<None Include="../../src/nugetPackageIcon.png" Pack="true" PackagePath="\" />
+		<None Include="../../LICENSE" Pack="true" PackagePath="\" />
+		<None Include="../../README.MD" Pack="true" PackagePath="\" />
+	</ItemGroup>
+
+</Project>

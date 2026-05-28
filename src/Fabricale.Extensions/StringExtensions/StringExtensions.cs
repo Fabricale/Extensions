@@ -1,0 +1,369 @@
+﻿// *****************************************************************************
+// Copyright (c) Fabricale(TM)
+// Licensed under the Apache License, Version 2.0
+// *****************************************************************************
+
+#pragma warning disable IDE0059 // Unnecessary assignment of a value
+
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Fabricale.Extensions;
+
+/// <summary>
+/// Provides Extension Methods for the <see cref="System.String"/> class
+/// </summary>
+public static class StringExtensions
+{
+    // ================================================================================
+    // Find String in String
+    // ================================================================================
+
+    /// <summary>
+    /// Finds all the positions of a string inside another string
+    /// </summary>
+    /// <param name="originalString">The original string</param>
+    /// <param name="stringToFind">The string to find</param>
+    /// <remarks>The search will be done using the <see cref="StringComparison.OrdinalIgnoreCase"/> option</remarks>
+    /// <returns>A <see cref="Dictionary{TKey, TValue}"/> keyed by the position where the text is found</returns>
+    public static IDictionary<int, FoundLocation> Find(this string originalString, string stringToFind)
+    {
+        return Find(originalString, StringComparison.OrdinalIgnoreCase, stringToFind);
+    }
+
+    /// <summary>
+    /// Finds all the positions of a string inside another string
+    /// </summary>
+    /// <param name="originalString">The original string</param>
+    /// <param name="comparisonType">A flag to define how the comparison should be made</param>
+    /// <param name="stringToFind">The string to find</param>
+    /// <returns>A <see cref="Dictionary{TKey, TValue}"/> keyed by the position where the text is found</returns>
+    public static IDictionary<int, FoundLocation> Find(this string originalString, StringComparison comparisonType, string stringToFind)
+    {
+        // A sorted dictionary representing the location where each instance of any text was found
+        var dictionaryOfReplacements = new SortedDictionary<int, FoundLocation>();
+
+        int index = 0;
+
+        while ((index = originalString.IndexOf(stringToFind, index, comparisonType)) != -1)
+        {
+            dictionaryOfReplacements.Add(index, new FoundLocation(0, index, index + stringToFind.Length));
+            index += stringToFind.Length;
+        }
+
+        return dictionaryOfReplacements;
+    }
+
+    // ================================================================================
+    // Replace String in String
+    // ================================================================================
+
+    // *********************************************
+    // **** BEGIN: CONSTRUCTOR WITH 1 PARAMETER ****
+    // *********************************************
+
+    /// <summary>
+    /// Finds and Replaces multiple strings at the same time
+    /// </summary>
+    /// <param name="originalString">The original string</param>
+    /// <param name="stringToFind">The string to be replaced</param>
+    /// <param name="replacementString">The replacement string</param>
+    /// <returns>A <see cref="string"/> containing the original string with the replaced contents</returns>
+    public static string MultiReplace(this string originalString, string stringToFind, string replacementString)
+    {
+        return MultiReplace(originalString, new MultiReplaceOptions(stringToFind, replacementString));
+    }
+
+    /// <summary>
+    /// Finds and Replaces multiple strings at the same time
+    /// </summary>
+    /// <param name="originalString">The original string</param>
+    /// <param name="comparisonType">A flag to define how the comparison should be made</param>
+    /// <param name="stringToFind">The string to be replaced</param>
+    /// <param name="replacementString">The replacement string</param>
+    /// <returns>A <see cref="string"/> containing the original string with the replaced contents</returns>
+    public static string MultiReplace(this string originalString, StringComparison comparisonType, string stringToFind, string replacementString)
+    {
+        return MultiReplace(originalString, comparisonType, new MultiReplaceOptions(stringToFind, replacementString));
+    }
+
+    // **********************************************
+    // **** BEGIN: CONSTRUCTOR WITH 2 PARAMETERS ****
+    // **********************************************
+
+    /// <summary>
+    /// Finds and Replaces multiple strings at the same time
+    /// </summary>
+    /// <param name="originalString">The original string</param>
+    /// <param name="stringToFind01">The first string to find</param>
+    /// <param name="replacementString01">The replacement for the <paramref name="stringToFind01"/></param>
+    /// <param name="stringToFind02">The second string to find</param>
+    /// <param name="replacementString02">The replacement for the <paramref name="stringToFind02"/></param>
+    /// <returns>A <see cref="string"/> containing the original string with the replaced contents</returns>
+    public static string MultiReplace(this string originalString, string stringToFind01, string replacementString01,
+                                                                  string stringToFind02, string replacementString02)
+    {
+        return MultiReplace(originalString, StringComparison.OrdinalIgnoreCase, new MultiReplaceOptions(stringToFind01, replacementString01),
+                                                                                new MultiReplaceOptions(stringToFind02, replacementString02));
+    }
+
+    /// <summary>
+    /// Finds and Replaces multiple strings at the same time
+    /// </summary>
+    /// <param name="originalString">The original string</param>
+    /// <param name="comparisonType">A flag to define how the comparison should be made</param>
+    /// <param name="stringToFind01">The first string to find</param>
+    /// <param name="replacementString01">The replacement for the <paramref name="stringToFind01"/></param>
+    /// <param name="stringToFind02">The second string to find</param>
+    /// <param name="replacementString02">The replacement for the <paramref name="stringToFind02"/></param>
+    /// <returns>A <see cref="string"/> containing the original string with the replaced contents</returns>
+    public static string MultiReplace(this string originalString, StringComparison comparisonType, string stringToFind01, string replacementString01,
+                                                                                                   string stringToFind02, string replacementString02)
+    {
+        return MultiReplace(originalString, comparisonType, new MultiReplaceOptions(stringToFind01, replacementString01),
+                                                            new MultiReplaceOptions(stringToFind02, replacementString02));
+    }
+
+    // **********************************************
+    // **** BEGIN: CONSTRUCTOR WITH 3 PARAMETERS ****
+    // **********************************************
+
+    /// <summary>
+    /// Finds and Replaces multiple strings at the same time
+    /// </summary>
+    /// <param name="originalString">The original string</param>
+    /// <param name="stringToFind01">The first string to find</param>
+    /// <param name="replacementString01">The replacement for the <paramref name="stringToFind01"/></param>
+    /// <param name="stringToFind02">The second string to find</param>
+    /// <param name="replacementString02">The replacement for the <paramref name="stringToFind02"/></param>
+    /// <param name="stringToFind03">The third string to find</param>
+    /// <param name="replacementString03">The replacement for the <paramref name="stringToFind03"/></param>
+    /// <returns>A <see cref="string"/> containing the original string with the replaced contents</returns>
+    public static string MultiReplace(this string originalString, string stringToFind01, string replacementString01,
+                                                                  string stringToFind02, string replacementString02,
+                                                                  string stringToFind03, string replacementString03)
+    {
+        return MultiReplace(originalString, StringComparison.OrdinalIgnoreCase, new MultiReplaceOptions(stringToFind01, replacementString01),
+                                                                                new MultiReplaceOptions(stringToFind02, replacementString02),
+                                                                                new MultiReplaceOptions(stringToFind03, replacementString03));
+    }
+
+    /// <summary>
+    /// Finds and Replaces multiple strings at the same time
+    /// </summary>
+    /// <param name="originalString">The original string</param>
+    /// <param name="comparisonType">A flag to define how the comparison should be made</param>
+    /// <param name="stringToFind01">The first string to find</param>
+    /// <param name="replacementString01">The replacement for the <paramref name="stringToFind01"/></param>
+    /// <param name="stringToFind02">The second string to find</param>
+    /// <param name="replacementString02">The replacement for the <paramref name="stringToFind02"/></param>
+    /// <param name="stringToFind03">The third string to find</param>
+    /// <param name="replacementString03">The replacement for the <paramref name="stringToFind03"/></param>
+    /// <returns>A <see cref="string"/> containing the original string with the replaced contents</returns>
+    public static string MultiReplace(this string originalString, StringComparison comparisonType, string stringToFind01, string replacementString01,
+                                                                                                   string stringToFind02, string replacementString02,
+                                                                                                   string stringToFind03, string replacementString03)
+    {
+        return MultiReplace(originalString, comparisonType, new MultiReplaceOptions(stringToFind01, replacementString01),
+                                                            new MultiReplaceOptions(stringToFind02, replacementString02),
+                                                            new MultiReplaceOptions(stringToFind03, replacementString03));
+    }
+
+    // **********************************************
+    // **** BEGIN: CONSTRUCTOR WITH 4 PARAMETERS ****
+    // **********************************************
+
+    /// <summary>
+    /// Finds and Replaces multiple strings at the same time
+    /// </summary>
+    /// <param name="originalString">The original string</param>
+    /// <param name="stringToFind01">The first string to find</param>
+    /// <param name="replacementString01">The replacement for the <paramref name="stringToFind01"/></param>
+    /// <param name="stringToFind02">The second string to find</param>
+    /// <param name="replacementString02">The replacement for the <paramref name="stringToFind02"/></param>
+    /// <param name="stringToFind03">The third string to find</param>
+    /// <param name="replacementString03">The replacement for the <paramref name="stringToFind03"/></param>
+    /// <param name="stringToFind04">The fourth string to find</param>
+    /// <param name="replacementString04">The replacement for the <paramref name="stringToFind04"/></param>
+    /// <returns>A <see cref="string"/> containing the original string with the replaced contents</returns>
+    public static string MultiReplace(this string originalString, string stringToFind01, string replacementString01,
+                                                                  string stringToFind02, string replacementString02,
+                                                                  string stringToFind03, string replacementString03,
+                                                                  string stringToFind04, string replacementString04)
+    {
+        return MultiReplace(originalString, StringComparison.OrdinalIgnoreCase, new MultiReplaceOptions(stringToFind01, replacementString01),
+                                                                                new MultiReplaceOptions(stringToFind02, replacementString02),
+                                                                                new MultiReplaceOptions(stringToFind03, replacementString03),
+                                                                                new MultiReplaceOptions(stringToFind04, replacementString04));
+    }
+
+    /// <summary>
+    /// Finds and Replaces multiple strings at the same time
+    /// </summary>
+    /// <param name="originalString">The original string</param>
+    /// <param name="comparisonType">A flag to define how the comparison should be made</param>
+    /// <param name="stringToFind01">The first string to find</param>
+    /// <param name="replacementString01">The replacement for the <paramref name="stringToFind01"/></param>
+    /// <param name="stringToFind02">The second string to find</param>
+    /// <param name="replacementString02">The replacement for the <paramref name="stringToFind02"/></param>
+    /// <param name="stringToFind03">The third string to find</param>
+    /// <param name="replacementString03">The replacement for the <paramref name="stringToFind03"/></param>
+    /// <param name="stringToFind04">The fourth string to find</param>
+    /// <param name="replacementString04">The replacement for the <paramref name="stringToFind04"/></param>
+    /// <returns>A <see cref="string"/> containing the original string with the replaced contents</returns>
+    public static string MultiReplace(this string originalString, StringComparison comparisonType, string stringToFind01, string replacementString01,
+                                                                                                   string stringToFind02, string replacementString02,
+                                                                                                   string stringToFind03, string replacementString03,
+                                                                                                   string stringToFind04, string replacementString04)
+    {
+        return MultiReplace(originalString, comparisonType, new MultiReplaceOptions(stringToFind01, replacementString01),
+                                                            new MultiReplaceOptions(stringToFind02, replacementString02),
+                                                            new MultiReplaceOptions(stringToFind03, replacementString03),
+                                                            new MultiReplaceOptions(stringToFind04, replacementString04));
+    }
+
+    // **********************************************
+    // **** BEGIN: CONSTRUCTOR WITH 5 PARAMETERS ****
+    // **********************************************
+
+    /// <summary>
+    /// Finds and Replaces multiple strings at the same time
+    /// </summary>
+    /// <param name="originalString">The original string</param>
+    /// <param name="stringToFind01">The first string to find</param>
+    /// <param name="replacementString01">The replacement for the <paramref name="stringToFind01"/></param>
+    /// <param name="stringToFind02">The second string to find</param>
+    /// <param name="replacementString02">The replacement for the <paramref name="stringToFind02"/></param>
+    /// <param name="stringToFind03">The third string to find</param>
+    /// <param name="replacementString03">The replacement for the <paramref name="stringToFind03"/></param>
+    /// <param name="stringToFind04">The fourth string to find</param>
+    /// <param name="replacementString04">The replacement for the <paramref name="stringToFind04"/></param>
+    /// <param name="stringToFind05">The fifth string to find</param>
+    /// <param name="replacementString05">The replacement for the <paramref name="stringToFind05"/></param>
+    /// <returns>A <see cref="string"/> containing the original string with the replaced contents</returns>
+    public static string MultiReplace(this string originalString, string stringToFind01, string replacementString01,
+                                                                  string stringToFind02, string replacementString02,
+                                                                  string stringToFind03, string replacementString03,
+                                                                  string stringToFind04, string replacementString04,
+                                                                  string stringToFind05, string replacementString05)
+    {
+        return MultiReplace(originalString, StringComparison.OrdinalIgnoreCase, new MultiReplaceOptions(stringToFind01, replacementString01),
+                                                                                new MultiReplaceOptions(stringToFind02, replacementString02),
+                                                                                new MultiReplaceOptions(stringToFind03, replacementString03),
+                                                                                new MultiReplaceOptions(stringToFind04, replacementString04),
+                                                                                new MultiReplaceOptions(stringToFind05, replacementString05));
+    }
+
+    /// <summary>
+    /// Finds and Replaces multiple strings at the same time
+    /// </summary>
+    /// <param name="originalString">The original string</param>
+    /// <param name="comparisonType">A flag to define how the comparison should be made</param>
+    /// <param name="stringToFind01">The first string to find</param>
+    /// <param name="replacementString01">The replacement for the <paramref name="stringToFind01"/></param>
+    /// <param name="stringToFind02">The second string to find</param>
+    /// <param name="replacementString02">The replacement for the <paramref name="stringToFind02"/></param>
+    /// <param name="stringToFind03">The third string to find</param>
+    /// <param name="replacementString03">The replacement for the <paramref name="stringToFind03"/></param>
+    /// <param name="stringToFind04">The fourth string to find</param>
+    /// <param name="replacementString04">The replacement for the <paramref name="stringToFind04"/></param>
+    /// <param name="stringToFind05">The fifth string to find</param>
+    /// <param name="replacementString05">The replacement for the <paramref name="stringToFind05"/></param>
+    /// <returns>A <see cref="string"/> containing the original string with the replaced contents</returns>
+    public static string MultiReplace(this string originalString, StringComparison comparisonType, string stringToFind01, string replacementString01,
+                                                                                                   string stringToFind02, string replacementString02,
+                                                                                                   string stringToFind03, string replacementString03,
+                                                                                                   string stringToFind04, string replacementString04,
+                                                                                                   string stringToFind05, string replacementString05)
+    {
+        return MultiReplace(originalString, comparisonType, new MultiReplaceOptions(stringToFind01, replacementString01),
+                                                            new MultiReplaceOptions(stringToFind02, replacementString02),
+                                                            new MultiReplaceOptions(stringToFind03, replacementString03),
+                                                            new MultiReplaceOptions(stringToFind04, replacementString04),
+                                                            new MultiReplaceOptions(stringToFind05, replacementString05));
+    }
+
+    // ***************************************************
+    // **** END: CONSTRUCTOR WITH MULTIPLE PARAMETERS ****
+    // ***************************************************
+
+    /// <summary>
+    /// Finds and Replaces multiple strings at the same time
+    /// </summary>
+    /// <param name="originalString">The original string</param>
+    /// <param name="options">An array containing the instructions for the find/replace operation</param>
+    /// <returns>A <see cref="string"/> containing the original string with the replaced contents</returns>
+    public static string MultiReplace(this string originalString, params MultiReplaceOptions[] options)
+    {
+        return MultiReplace(originalString, StringComparison.OrdinalIgnoreCase, options);
+    }
+
+    /// <summary>
+    /// Finds and Replaces multiple strings at the same time
+    /// </summary>
+    /// <param name="originalString">The original string</param>
+    /// <param name="comparisonType">A flag to define how the comparison should be made</param>
+    /// <param name="options">An array containing the instructions for the find/replace operation</param>
+    /// <returns>A <see cref="string"/> containing the original string with the replaced contents</returns>
+    public static string MultiReplace(this string originalString, StringComparison comparisonType, params MultiReplaceOptions[] options)
+    {
+        // A sorted dictionary representing the location where each instance of any text was found
+        var dictionaryOfReplacements = new SortedDictionary<int, FoundLocation>();
+
+
+        int currentTextSizeDifference = 0;                      // Store the difference between the current text and the replacement text
+        int bufferSize = originalString.Length;                 // Store the size of the string buffer, to prevent memory reallocation
+
+        // Map Locations where the replacements have to happen
+        for (int iStructure = 0; iStructure < options.Length; iStructure++)
+        {
+            int index = 0;
+
+            currentTextSizeDifference = options[iStructure].ReplacementString.Length - options[iStructure].StringToFind.Length;
+
+            while ((index = originalString.IndexOf(options[iStructure].StringToFind, index, comparisonType)) != -1)
+            {
+                dictionaryOfReplacements.Add(index, new FoundLocation(iStructure, index, index + options[iStructure].StringToFind.Length));
+                bufferSize += currentTextSizeDifference;
+                index += options[iStructure].StringToFind.Length;
+            }
+        }
+
+        // Make sure there are replacements to do
+        if (dictionaryOfReplacements.Count == 0)
+            return originalString;
+
+        // Perform Replacements
+        using var enumerator = dictionaryOfReplacements.GetEnumerator();
+        bool enumeratorIsValid = enumerator.MoveNext();
+
+        if (!enumeratorIsValid)
+            return originalString;
+
+        // Create the String Builder with the final size
+        var sb = new StringBuilder(bufferSize);
+
+        int iRead = 0;
+
+        while (iRead < originalString.Length)
+        {
+            if (enumeratorIsValid && enumerator.Current.Key == iRead)
+            {
+                sb.Append(options[enumerator.Current.Value.IndexOfTerm].ReplacementString);
+                iRead = enumerator.Current.Value.EndPosition - 1;
+                enumeratorIsValid = enumerator.MoveNext();
+            }
+            else
+            {
+                sb.Append(originalString[iRead]);
+            }
+
+            iRead++;
+        }
+
+        return sb.ToString();
+    }
+}
+
+#pragma warning restore IDE0059 // Unnecessary assignment of a value
