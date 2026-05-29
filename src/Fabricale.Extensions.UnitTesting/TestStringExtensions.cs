@@ -66,6 +66,10 @@
             Assert.AreEqual(expectedResult, input.ContainsOnlyNumbers());
         }
 
+        // ======================================================================
+        // Contains Only (ASCII Performance Implementation)
+        // ======================================================================
+
         [TestMethod]
         [DataRow("ABCDEabcde", true)]
         [DataRow("abjsaflka99", false)]
@@ -84,6 +88,49 @@
         public void ContainsOnlyAsciiLettersAndNumbers_Simple(string input, bool expectedResult)
         {
             Assert.AreEqual(expectedResult, input.ContainsOnlyAsciiLettersAndNumbers());
+        }
+
+        [TestMethod]
+        public void ContainsOnly_InvalidArraySize()
+        {
+            // The ASCII functions require the array to have 128 positions. Anything different than that should throw an error.
+            var boolArray = new bool[127];
+
+            boolArray['A'] = true; // 65
+            boolArray['a'] = true; // 97
+
+            var input = "Aa";
+
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => input.ContainsOnly(boolArray));
+        }
+
+        // ======================================================================
+        // Contains Only (Unicode Testing)
+        // ======================================================================
+
+        private const string RUSSIAN_ALPHABET = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя«»";
+
+        [TestMethod]
+        [DataRow("дом", RUSSIAN_ALPHABET, true, true)]
+        [DataRow("кот", RUSSIAN_ALPHABET, true, true)]
+        [DataRow("«собаку»", RUSSIAN_ALPHABET, true, true)]
+        [DataRow("'собаку'", RUSSIAN_ALPHABET, true, false)]
+        public void ContainsOnly_Unicode_Simple(string input, string allowedCharacters, bool ignoreCase, bool expectedResult)
+        {
+            Assert.AreEqual(expectedResult, input.ContainsOnly(allowedCharacters, ignoreCase));
+        }
+
+        [TestMethod]
+        public void ContainsOnly_Unicode_WithAsciiFunctions()
+        {
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => RUSSIAN_ALPHABET.ConvertToAsciiBooleanArray());
+            var russianText = "«собаку»";
+
+            // This assertion should throw an exception because Russian Alphabet is not compatible with ASCII 7-bit
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => russianText.ContainsOnlyAsciiLetters());
+
+            // This assertion should work, because Russian Alphabet is unicode
+            Assert.IsTrue(russianText.ContainsOnly(RUSSIAN_ALPHABET, true));
         }
     }
 }
