@@ -432,33 +432,12 @@ public static class StringExtensions
 
     // When only searching for ASCII characters, there is no need to use a HashSet<char>.
     // It's better to have an array with 128 bools to define if the char is allowed or not. It removes the cost of hashing.
-    // The 129th space in the array is to define whether it has been initialized or not
 
-    private const string ASCII_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    private static readonly bool[] _ascii_LettersArray = new bool[129];
+    private const string ASCII_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    private static readonly bool[] ASCII_LettersArray = ASCII_LETTERS.ConvertToAsciiBooleanArray();
 
-    /// <summary>
-    /// Defines the array of activated ASCII Letters
-    /// </summary>
-    internal static bool[] ASCII_LettersArray
-    {
-        get
-        {
-            if (_ascii_LettersArray[128] == false)
-            {
-                // Initialize ASCII Letters
-                foreach (var c in ASCII_LETTERS)
-                {
-                    _ascii_LettersArray[char.ToUpperInvariant(c)] = true;
-                    _ascii_LettersArray[char.ToLowerInvariant(c)] = true;
-                }
-
-                _ascii_LettersArray[128] = true;
-            }
-
-            return _ascii_LettersArray;
-        }
-    }
+    private const string ASCII_LETTERS_AND_NUMBERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    private static readonly bool[] ASCII_LettersAndNumbersArray = ASCII_LETTERS_AND_NUMBERS.ConvertToAsciiBooleanArray();
 
     /// <summary>
     /// Checks if a string only contain ascii letters (case-insensitive)
@@ -467,18 +446,7 @@ public static class StringExtensions
     /// <returns>True if the string only contains Ascii letters. False if there are other characters in the string.</returns>
     public static bool ContainsOnlyAsciiLetters(this string input)
     {
-        foreach (var c in input)
-        {
-            // Limit to ASCII characters
-            if (c > 127)
-                return false;
-
-            // Check for active letters
-            if (!ASCII_LettersArray[c])
-                return false;
-        }
-
-        return true;
+        return ContainsOnly(input, ASCII_LettersArray);
     }
 
     /// <summary>
@@ -488,23 +456,55 @@ public static class StringExtensions
     /// <returns>True if the string only contains Ascii letters or numbers. False if there are other characters in the string.</returns>
     public static bool ContainsOnlyAsciiLettersAndNumbers(this string input)
     {
+        return ContainsOnly(input, ASCII_LettersAndNumbersArray);
+    }
+
+    /// <summary>
+    /// Checks if a string only contains the characters defined in the input array (ASCII Only)
+    /// </summary>
+    /// <param name="input">Reference to the original string</param>
+    /// <param name="asciiBooleanArray">A boolean array with 128 positions, each one representing one of the ascii characters</param>
+    /// <returns>True if the string only contains the characters defined at <paramref name="asciiBooleanArray"/>. False if it contains more characters than the accepted.</returns>
+    /// <remarks>Use this method in case you need to reuse the same boolean array multiple times. You can generate the boolean array by using the extension method <see cref="ConvertToAsciiBooleanArray(string)"/>.</remarks>
+    public static bool ContainsOnly(this string input, bool[] asciiBooleanArray)
+    {
+        if (asciiBooleanArray.Length != 128)
+            throw new ArgumentOutOfRangeException(nameof(asciiBooleanArray), $"The size of the boolean array is invalid. It should be \"128\", but it is \"{asciiBooleanArray.Length}\".");
+
         foreach (var c in input)
         {
-            // Limit to ASCII characters
-            if (c > 127)
+            // Character is out of the boundaries
+            if (c >= asciiBooleanArray.Length)
+                throw new ArgumentOutOfRangeException(nameof(input), $"The character \"{c}\" is outside of the ASCII range");
+
+            // Check if character is activated
+            if (!asciiBooleanArray[c])
                 return false;
-
-            // It is a number
-            if (c >= 48 && c <= 57)
-                continue;
-
-            // Check for active letters
-            if (!ASCII_LettersArray[c])
-                return false;
-
         }
 
         return true;
+    }
+
+    /// <summary>
+    /// Generates a boolean array with the ASCII characters inside the given string
+    /// </summary>
+    /// <param name="input">Referehcen to the original string</param>
+    /// <returns>A boolean array containing the character codes and whether they are activated or not</returns>
+    /// <remarks>This function will only process ASCII characters, from 0 to 127. Any character beyond this range will be ignored.</remarks>
+    public static bool[] ConvertToAsciiBooleanArray(this string input)
+    {
+        var asciiBooleanArray = new bool[128];
+
+        foreach (var c in input)
+        {
+            // Character is out of the boundaries
+            if (c >= asciiBooleanArray.Length)
+                throw new ArgumentOutOfRangeException(nameof(input), $"The character \"{c}\" is outside of the ASCII range");
+
+            asciiBooleanArray[c] = true;
+        }
+
+        return asciiBooleanArray;
     }
 }
 
