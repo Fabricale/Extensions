@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Fabricale.Extensions;
@@ -363,6 +364,147 @@ public static class StringExtensions
         }
 
         return sb.ToString();
+    }
+
+    // ================================================================================
+    // Contains Only
+    // ================================================================================
+
+    /// <summary>
+    /// Checks if a string only contain certain characters
+    /// </summary>
+    /// <param name="input">Reference to the original string</param>
+    /// <param name="allowedCharacters">The acceptable characters</param>
+    /// <param name="ignoreCase">Defines whether the case is taken into consideration or not</param>
+    /// <returns>True if the string only contains the characters defined at <paramref name="allowedCharacters"/>. False if it contains more characters than the accepted.</returns>
+    public static bool ContainsOnly(this string input, string allowedCharacters, bool ignoreCase = false)
+    {
+        // Set the Comparer for case sensitive / insensitive
+        var comparer = ignoreCase ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal;
+
+        // Setup the HashSet of valid strings (cannot do it with char, StringComparer does not work on it)
+        //var allowedSet = new HashSet<string>(allowedCharacters.Select(c => c.ToString()), comparer);
+        var allowedSet = ignoreCase ? new HashSet<char>(allowedCharacters, CharComparer.CaseInsensitive)
+                                    : new HashSet<char>(allowedCharacters, CharComparer.CaseSensitive);
+
+        return ContainsOnly(input, allowedSet);
+    }
+
+    /// <summary>
+    /// Checks if a string only contains certain characters
+    /// </summary>
+    /// <param name="input">Reference to the original string</param>
+    /// <param name="allowedCharactersHashSet">The HashSet of characters to search on</param>
+    /// <returns>True if the string only contains the characters defined at <paramref name="allowedCharactersHashSet"/>. False if it contains more characters than the accepted.</returns>
+    /// <remarks>Use this method in case you need to reuse the same HashSet multiple times</remarks>
+    public static bool ContainsOnly(this string input, HashSet<char> allowedCharactersHashSet)
+    {
+        // Check each character in the input
+        foreach (var c in input)
+        {
+            if (!allowedCharactersHashSet.Contains(c))
+                return false;
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Checks if a string only contain numbers
+    /// </summary>
+    /// <param name="input">Reference to the input string</param>
+    /// <returns>True if the string only contains numbers. False if there are other characters in the string.</returns>
+    public static bool ContainsOnlyNumbers(this string input)
+    {
+        // Check each character in the input
+        foreach (var c in input)
+        {
+            if (c < '0' || c > '9')
+                return false;
+        }
+
+        return true;
+    }
+
+    // ================================================================================
+    // Contains Only (ASCII Performance Implementation)
+    // ================================================================================
+
+    // When only searching for ASCII characters, there is no need to use a HashSet<char>.
+    // It's better to have an array with 128 bools to define if the char is allowed or not. It removes the cost of hashing.
+    // The 129th space in the array is to define whether it has been initialized or not
+
+    private const string ASCII_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private static readonly bool[] _ascii_LettersArray = new bool[129];
+
+    /// <summary>
+    /// Defines the array of activated ASCII Letters
+    /// </summary>
+    internal static bool[] ASCII_LettersArray
+    {
+        get
+        {
+            if (_ascii_LettersArray[128] == false)
+            {
+                // Initialize ASCII Letters
+                foreach (var c in ASCII_LETTERS)
+                {
+                    _ascii_LettersArray[char.ToUpperInvariant(c)] = true;
+                    _ascii_LettersArray[char.ToLowerInvariant(c)] = true;
+                }
+
+                _ascii_LettersArray[128] = true;
+            }
+
+            return _ascii_LettersArray;
+        }
+    }
+
+    /// <summary>
+    /// Checks if a string only contain ascii letters (case-insensitive)
+    /// </summary>
+    /// <param name="input">Reference to the input string</param>
+    /// <returns>True if the string only contains Ascii letters. False if there are other characters in the string.</returns>
+    public static bool ContainsOnlyAsciiLetters(this string input)
+    {
+        foreach (var c in input)
+        {
+            // Limit to ASCII characters
+            if (c > 127)
+                return false;
+
+            // Check for active letters
+            if (!ASCII_LettersArray[c])
+                return false;
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Checks if a string only contains ascii letters and numbers  (case-insensitive)
+    /// </summary>
+    /// <param name="input">Reference to the input string</param>
+    /// <returns>True if the string only contains Ascii letters or numbers. False if there are other characters in the string.</returns>
+    public static bool ContainsOnlyAsciiLettersAndNumbers(this string input)
+    {
+        foreach (var c in input)
+        {
+            // Limit to ASCII characters
+            if (c > 127)
+                return false;
+
+            // It is a number
+            if (c >= 48 && c <= 57)
+                continue;
+
+            // Check for active letters
+            if (!ASCII_LettersArray[c])
+                return false;
+
+        }
+
+        return true;
     }
 }
 
