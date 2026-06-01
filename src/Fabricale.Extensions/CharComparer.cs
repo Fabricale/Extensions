@@ -28,7 +28,7 @@ public abstract class CharComparer: IEqualityComparer<char>, IComparer<char>
     /// <inheritdoc/>>
     public abstract int Compare(char x, char y);
 
-#if NETSTANDARD2_0_OR_GREATER
+#if NETSTANDARD2_0_OR_GREATER || NET471_OR_GREATER
     
     /// <inheritdoc/>
     public abstract int GetHashCode(char x);

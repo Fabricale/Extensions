@@ -7,11 +7,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fabricale.Extensions", "Fab
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
 	ProjectSection(SolutionItems) = preProject
+		CHANGELOG.MD = CHANGELOG.MD
 		..\LICENSE = ..\LICENSE
 		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fabricale.Extensions.UnitTesting", "Fabricale.Extensions.UnitTesting\Fabricale.Extensions.UnitTesting.csproj", "{18DC5167-DCC5-4C71-89D0-DD321DCDC1D7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fabricale.Extensions.Benchmarks", "Fabricale.Extensions.Benchmarks\Fabricale.Extensions.Benchmarks.csproj", "{22155246-2EC6-402B-8CAB-B1050D91BB4E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +30,10 @@ Global
 		{18DC5167-DCC5-4C71-89D0-DD321DCDC1D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{18DC5167-DCC5-4C71-89D0-DD321DCDC1D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{18DC5167-DCC5-4C71-89D0-DD321DCDC1D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22155246-2EC6-402B-8CAB-B1050D91BB4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22155246-2EC6-402B-8CAB-B1050D91BB4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22155246-2EC6-402B-8CAB-B1050D91BB4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22155246-2EC6-402B-8CAB-B1050D91BB4E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
