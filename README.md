@@ -35,6 +35,17 @@ When using the `ContainsOnly()` method, there is a constructor available that ac
 
 If you have a specific list of ASCII characters that you want to check, consider using the extension method `ConvertToAsciiBolleanArray()` to create an array with the acceptable characters, and cache it.
 
+## DateTime Extensions
+
+The library provides the following extensions to the `string` class:
+
+| Method | Purpose |
+| ------ | ------- |
+| `AddBusinesDays()` | Adds or Subtracts Business Days to a Date |
+| `ToJulian()` | Converts a `DateTime` into a `double` representing the Julian Date |
+
+The `AddBusinessDays()` function will add or subtract days, ignoring weekends. Holidays are not taken into consideration. A future release should include that functionality.
+
 ## CharComparer
 
 This class offers the option to compare characters.
